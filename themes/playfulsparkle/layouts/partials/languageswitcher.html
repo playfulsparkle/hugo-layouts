@@ -1,0 +1,13 @@
+{{- if .Site.IsMultiLingual -}}
+<ul>
+  {{- range .AllTranslations }}
+    <li>
+    {{- if eq $.Site.Language.Lang .Language.Lang -}}
+    <strong lang="{{ .Lang }}">{{ .Language.LanguageName }}</strong>
+    {{- else -}}
+    <a href="{{ .RelPermalink }}" rel="alternate" lang="{{ .Lang }}" hreflang="{{ .Language.LanguageCode }}">{{ .Language.LanguageName }}</a>
+    {{- end -}}
+  </li>
+  {{- end }}
+</ul>
+{{- end -}}

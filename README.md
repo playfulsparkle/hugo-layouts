@@ -12,6 +12,7 @@ Table of Contents
     *   [languagelinks.html](#languagelinkshtml)
     *   [languageswitcher.html](#languageswitcherhtml)
     *   [svgicons.html](#svgiconshtml)
+    *   [toc.html](#tochtml)
 *   [Usage Instructions](#usage-instructions)
 *   [Contributing](#contributing)
 *   [License](#license)
@@ -122,6 +123,44 @@ To include SVG icons in your page, use the following code:
 {{ partial "svgicons.html" . }}
 ```
     
+### toc.html
+
+This partial generates a Table of Contents (TOC) for HTML pages specifically. It helps users navigate the content by providing a list of headings on the page.
+
+**Usage:**
+
+To include the Table of Contents, use the following code where you want the TOC to appear:
+
+```go
+{{ partial "toc.html" . }}
+```
+    
+```html
+<nav class="toc-nav" aria-label="Table of Contents">
+  <h3>Table of Contents <button type="button" class="toc-btn-primary" aria-controls="toc-nav-list" aria-expanded="false">
+      <svg class="icon icon-arrow" aria-hidden="true">
+        <use xlink:href="#icon-arrow"></use>
+      </svg>
+    </button></h3>
+  <ul class="nav-list" id="toc-nav-list">
+    <li>
+      <a href="<url>#section-1">Section 1</a>
+    </li>
+    <li data-autohide="true" hidden>
+      <a href="<url>#section-2">Section 2</a>
+    </li>
+  </ul>
+  <button type="button" class="toc-btn-secondary" aria-controls="toc-nav-list" aria-expanded="false">
+    <svg class="icon icon-dots-three-horizontal" aria-hidden="true">
+      <use xlink:href="#icon-dots-three-horizontal"></use>
+    </svg>
+    <svg class="icon icon-arrow" aria-hidden="true">
+      <use xlink:href="#icon-arrow"></use>
+    </svg>
+  </button>
+</nav>
+```
+
 
 Usage Instructions
 ------------------

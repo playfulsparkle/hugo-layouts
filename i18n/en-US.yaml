@@ -1,2 +1,4 @@
 txt_breadcrumb_nav: 'Breadcrumb'
 txt_selected_language: 'Content Language Selector. Currently set to %s'
+txt_toc_nav: 'Table of Contents'
+txt_toc_heading: 'Table of Contents'

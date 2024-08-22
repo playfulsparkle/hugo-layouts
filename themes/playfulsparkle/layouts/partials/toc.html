@@ -1,0 +1,105 @@
+{{- /* Initialize. */}}
+{{- $partialName := "toc" }}
+
+{{- /* Verify minimum required version. */}}
+{{- $minHugoVersion := "0.125.6" }}
+{{- if lt hugo.Version $minHugoVersion }}
+  {{- errorf "The %q partial requires Hugo v%s or later." $partialName $minHugoVersion }}
+{{- end }}
+
+{{- /* Determine content path for warning and error messages. */}}
+{{- $contentPath := "" }}
+{{- with .File }}
+  {{- $contentPath = .Path }}
+{{- else }}
+  {{- $contentPath = .Path }}
+{{- end }}
+
+{{- /* Get configuration. */}}
+{{- $startLevel := or ($.Param "toc.startLevel" | int) 2 }}
+{{- $endLevel := or ($.Param "toc.endLevel" | int) 3 }}
+{{- $minNumHeadings := or ($.Param "toc.minNumHeadings" | int) 2 }}
+
+{{- /* Get headings. */}}
+{{- $headings := slice }}
+{{- $ids := slice }}
+{{- range findRE `(?is)<h\d.*?</h\d>` .Content }}
+  {{- $level := substr . 2 1 | int }}
+  {{- if and (ge $level $startLevel) (le $level $endLevel) }}
+    {{- $text := replaceRE `(?is)<h\d.*?>(.+?)</h\d>` "$1" . }}
+    {{- $text = trim $text " " | plainify | safeHTML }}
+    {{- $id := "" }}
+    {{- if findRE `\s+id=` . }}
+      {{- $id = replaceRE `(?is).+?\s+id=(?:\x22|\x27)?(.*?)(?:\x22|\x27)?[\s>].+` "$1" . }}
+      {{- $ids = $ids | append $id }}
+      {{- if not $id }}
+        {{- continue }}
+      {{- end }}
+    {{- else }}
+      {{- continue }}
+    {{- end }}
+    {{- $headings = $headings | append (dict "id" $id "level" $level "text" $text) }}
+  {{- end }}
+{{- end }}
+
+{{- /* Check for duplicate heading IDs. */}}
+{{- $unique := slice }}
+{{- $duplicates := slice }}
+{{- range $ids }}
+  {{- if in $unique . }}
+    {{- $duplicates = $duplicates | append . }}
+  {{- else }}
+    {{- $unique = $unique | append . }}
+  {{- end }}
+{{- end }}
+{{- with $duplicates }}
+  {{- errorf "The %q partial detected duplicate heading IDs (%s) in %s" $partialName (delimit . ", ") $contentPath }}
+{{- end }}
+
+{{- /* Render nested list */}}
+{{- if .Params.toc }}
+  {{- with $headings }}
+    {{- if ge (len .) $minNumHeadings }}
+      <nav class="toc-nav" aria-label="{{ T "txt_toc_nav" }}">
+        <h3>{{ T "txt_toc_heading" }} <button type="button" class="toc-btn-primary" {{ if lt $headings 10 }} hidden{{ end }} aria-controls="toc-nav-list" aria-expanded="false">
+          <svg class="icon icon-arrow" aria-hidden="true">
+            <use xlink:href="#icon-arrow"></use>
+          </svg>
+        </button></h3>
+          {{- $lastLevel := $startLevel }}
+          {{- $pos := 0 }}
+          {{- range $index, $element := $headings }}
+            {{- $currentLevel := $element.level }}
+            {{- if gt $currentLevel $lastLevel }}
+              {{- range $i := (seq (sub $currentLevel $lastLevel)) }}
+                <ul{{ if eq $index 0 }} class="nav-list" id="toc-nav-list"{{ end }}>
+              {{- end }}
+            {{- else if lt $currentLevel $lastLevel }}
+              {{- range $i := (seq (sub $lastLevel $currentLevel)) }}
+                </li></ul>
+              {{- end }}
+              </li>
+            {{- else if ne $index 0 }}
+              </li>
+            {{- end }}
+            <li{{ if ge $pos 10}} data-autohide="true" hidden{{ end }}>
+              <a href="{{ $.RelPermalink }}#{{ $element.id }}">{{ $element.text }}</a>
+            {{- $lastLevel = $element.level }}
+            {{- $pos = add $pos 1 -}}
+          {{- end }}
+          {{- range $i := (seq (sub $lastLevel $startLevel)) }}
+            </li></ul>
+            {{- $pos = add $pos 1 -}}
+          {{- end }}
+          <button type="button" class="toc-btn-secondary" {{ if lt $headings 10 }} hidden{{ end }} aria-controls="toc-nav-list" aria-expanded="false">
+            <svg class="icon icon-dots-three-horizontal" aria-hidden="true">
+              <use xlink:href="#icon-dots-three-horizontal"></use>
+            </svg>
+            <svg class="icon icon-arrow" aria-hidden="true">
+              <use xlink:href="#icon-arrow"></use>
+            </svg>
+          </button>
+      </nav>
+    {{- end }}
+  {{- end }}
+{{- end }}

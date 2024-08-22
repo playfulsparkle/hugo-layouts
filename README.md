@@ -134,7 +134,9 @@ To include the Table of Contents, use the following code where you want the TOC 
 ```go
 {{ partial "toc.html" . }}
 ```
-    
+
+**Example:**
+
 ```html
 <nav class="toc-nav" aria-label="Table of Contents">
   <h3>Table of Contents <button type="button" class="toc-btn-primary" aria-controls="toc-nav-list" aria-expanded="false">

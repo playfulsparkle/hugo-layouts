@@ -1,0 +1,17 @@
+{{- $siteLanguage := .Site.Language.Lang -}}
+{{- $siteLanguagename := .Site.Language.LanguageName -}}
+{{- if hugo.IsMultilingual -}}
+<div class="languages-switcher menu-button">
+  <button type="button" id="translation-menu-{{ now.UnixNano }}" aria-label="{{ printf (T "txt_selected_language" ) $siteLanguagename }}" lang="{{ .Language.LanguageCode }}" dir="{{ .Language.LanguageDirection }}" aria-haspopup="true" aria-controls="translation-list-{{ now.UnixNano }}">
+    <svg class="icon icon-globe" aria-hidden="true">
+      <use xlink:href="#icon-globe"></use>
+    </svg> {{ .Site.Language.LanguageName }}</button>
+  <ul id="translation-list-{{ now.UnixNano }}" role="menu" aria-labelledby="translation-menu-{{ now.UnixNano }}">
+    {{- range .AllTranslations }}
+    <li role="none">
+      <a href="{{ .RelPermalink }}" lang="{{ .Language.LanguageCode }}" dir="{{ .Language.LanguageDirection }}" rel="alternate" hreflang="{{ .Language.LanguageCode }}" role="menuitem"{{ if eq $siteLanguage .Language.Lang }} aria-current="location"{{ end }} tabindex="-1">{{ .Language.LanguageName }}</a>
+    </li>
+    {{- end }}
+  </ul>
+</div>
+{{- end -}}

@@ -1,0 +1,10 @@
+{{ if hugo.IsMultilingual }}
+  {{ range .AllTranslations }}
+    {{ if eq .Sites.Default.Language.Lang .Lang }}
+<link rel="alternate" hreflang="{{ .Language.LanguageCode }}" href="{{ .Permalink }}">
+<link rel="alternate" hreflang="x-default" href="{{ .Permalink }}">
+    {{ else }}
+<link rel="alternate" hreflang="{{ .Language.LanguageCode }}" href="{{ .Permalink }}">
+    {{ end }}
+  {{ end }}
+{{ end }}

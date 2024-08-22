@@ -1,0 +1,30 @@
+<nav class="breadcrumb-nav" aria-label="{{ T "txt_breadcrumb_nav" }}">
+  <ol class="nav-list">
+  {{ range $index, $element := .Ancestors.Reverse }}
+  <li>
+    <a href="{{ $element.RelPermalink }}">
+      {{ if (eq $index 0) }}
+        <svg class="icon icon-home" role="img">
+          <title>{{ $element.LinkTitle | safeHTML }}</title>
+          <use xlink:href="#icon-home"></use>
+        </svg>
+      {{ else }}
+        {{ $element.LinkTitle | safeHTML }}
+      {{ end }}
+    </a>
+  </li>
+  {{ end }}
+  <li>
+    <a href="{{ .RelPermalink }}" aria-current="location">
+    {{ if .IsHome }}
+        <svg class="icon icon-home" role="img">
+          <title>{{ .LinkTitle | safeHTML }}</title>
+          <use xlink:href="#icon-home"></use>
+        </svg>
+        {{ else }}
+          {{ .LinkTitle | safeHTML }}
+        {{ end }}
+      </a>
+    </li>
+  </ol>
+</nav>
